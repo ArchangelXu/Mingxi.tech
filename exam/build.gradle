@@ -1,0 +1,73 @@
+plugins {
+    id 'org.springframework.boot' version '2.1.3.RELEASE'
+    id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'tech.mingxi'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+
+    // https://mvnrepository.com/artifact/org.json/json
+    implementation group: 'org.json', name: 'json', version: '20180813'
+    // https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit
+    implementation group: 'com.squareup.retrofit2', name: 'retrofit', version: '2.5.0'
+    implementation group: 'com.squareup.retrofit2', name: 'converter-moshi', version: '2.5.0'
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.13.1'
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/logging-interceptor
+    compile group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: '3.13.1'
+    // https://mvnrepository.com/artifact/org.springframework.data/spring-data-rest-core
+    compile group: 'org.springframework.data', name: 'spring-data-rest-core', version: '3.1.5.RELEASE'
+
+    // DB
+    compile(
+            'org.springframework.boot:spring-boot-starter-actuator',
+            'org.springframework.boot:spring-boot-starter-web',
+            'org.springframework.boot:spring-boot-starter-data-jpa',
+            'org.springframework.boot:spring-boot-devtools',
+            'mysql:mysql-connector-java'
+    )
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    // https://mvnrepository.com/artifact/com.alibaba/druid
+    compile group: 'com.alibaba', name: 'druid', version: '1.1.14'
+    // https://mvnrepository.com/artifact/org.projectlombok/lombok
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.6'
+
+}
+
+void deleteDir(File dir) {
+    File[] files = dir.listFiles()
+    for (File f : files) {
+        if (f.isDirectory()) {
+            deleteDir(f)
+        } else {
+            f.delete()
+        }
+    }
+}
+
+task copyJarToOutputDir {
+    doLast {
+        File dir = new File('./output/')
+        if (dir.exists()) {
+            deleteDir(dir)
+        }
+        dir.mkdir()
+        File jar = new File("./build/libs/exam-$version" + ".jar");
+        if (jar.exists()) {
+            jar.renameTo(new File(dir, "exam.jar"));
+        }
+    }
+}
+copyJarToOutputDir.dependsOn bootJar
